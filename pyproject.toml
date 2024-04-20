@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "insurancer"
+version = "0.1.0"
+description = ""
+authors = ["hans.lee <hansli112@yahoo.com.tw>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+pandas = "^2.2.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
