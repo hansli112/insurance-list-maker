@@ -4,17 +4,20 @@ from argparse import ArgumentParser
 from datetime import date
 from pathlib import Path
 
-from id_checker import IDChecker
+from utils.id_checker import IDChecker
 
 class Insurancer():
-    def __init__(self, args):
-        with open(args.input_path) as f:
-            self.names = f.read().split()
-        with open(args.database) as f:
+    def __init__(self, database: str = "data.json"):
+        with open(database) as f:
             self.data = json.load(f)
-
         self.columns = ["姓名", "身分證字號", "生日", "保額", "國籍", "性別"]
         self.id_checker = IDChecker()
+        self.activity = None
+        self.date = None
+
+    def load_input(self, input_path: str):
+        with open(input_path) as f:
+            self.names = f.read().split()
         self.activity = input("請輸入活動名稱：")
         self.date = input("請輸入活動日期(e.g. 2024.01.01)：")
 
@@ -68,7 +71,7 @@ class Insurancer():
                 break
             print("性別錯誤，請重新輸入")
 
-        info = (id_number, birthday, 100, country, gender)
+        info = (id_number, birthday, str(100), country, gender)
         return info
     
     def _to_gender(self, id_number: str) -> str:
@@ -89,5 +92,6 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    insurancer = Insurancer(args)
+    insurancer = Insurancer(database=args.database)
+    insurancer.load_input(input_path=args.input_path)
     insurancer.make()
