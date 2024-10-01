@@ -1,4 +1,3 @@
-import json
 import pandas as pd
 from argparse import ArgumentParser
 from datetime import date
