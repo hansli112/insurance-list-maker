@@ -40,17 +40,19 @@ def main():
     with new_member_tab:
         name = st.text_input("姓名")
         id_number = st.text_input("身分證字號", max_chars=10)
-        if not insurancer.id_checker.check(id_number.upper()):
+        if id_number != "" and not insurancer.id_checker.check(id_number.upper()):
             st.error("身分證字號檢查未通過")
         birthday = str(st.date_input("生日", min_value=datetime.date(1930, 1, 1))).replace('-', '/')
         country = st.text_input("國籍", value="中華民國")
         gender = st.selectbox("性別", ["男", "女"])
+        note = st.text_input("備註")
 
         if st.button("新增"):
             if name and insurancer.id_checker.check(id_number.upper()) and birthday and country and gender:
                 if id_number in insurancer.data["身分證字號"].values:
                     st.error("身分證字號已存在")
-                    return
+                if name in insurancer.data["姓名"].values and note == "":
+                    st.error("姓名已存在，請輸入備註")
                 else:
                     info = pd.DataFrame({
                         "姓名": [name],
@@ -59,9 +61,13 @@ def main():
                         "保額": [100],
                         "國籍": ["A+B+C"] if country == "中華民國" else [country],
                         "性別": [gender],
-                        "備註": [""]
+                        "備註": [note]
                     })
                     insurancer.data = pd.concat((insurancer.data, info), ignore_index=True)
+                    insurancer.data = insurancer.data.sort_values(
+                            by="生日", 
+                    )
+                    print(insurancer.data)
                     insurancer.data.to_csv("database.csv", index=False)
                     st.success("新增成功")
             else:
