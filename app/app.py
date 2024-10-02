@@ -22,7 +22,7 @@ def main():
         attendants = []
         with st.container(height=450):
             for name, note in zip(insurancer.data[insurancer.columns[0]], insurancer.data["備註"]):
-                label = name if note == "" else f"{name} ({note})"
+                label = name if note == "" else f"{name}（{note}）"
                 if st.checkbox(label):
                     attendants.append(name)
 
@@ -69,7 +69,6 @@ def main():
                     insurancer.data = insurancer.data.sort_values(
                             by="生日", 
                     )
-                    print(insurancer.data)
                     insurancer.data.to_csv("database.csv", index=False)
                     st.success("新增成功")
             else:
