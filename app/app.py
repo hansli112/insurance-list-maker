@@ -42,6 +42,8 @@ def main():
         id_number = st.text_input("身分證字號", max_chars=10)
         if id_number != "" and not insurancer.id_checker.check(id_number.upper()):
             st.error("身分證字號檢查未通過")
+        if id_number in insurancer.data["身分證字號"].values:
+            st.error("身分證字號已存在")
         birthday = str(st.date_input("生日", min_value=datetime.date(1930, 1, 1))).replace('-', '/')
         country = st.text_input("國籍", value="中華民國")
         gender = st.selectbox("性別", ["男", "女"])
