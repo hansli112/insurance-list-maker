@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "insurancer"
+name = "insurance-list-maker"
 version = "0.1.0"
 description = ""
 authors = ["hans.lee <hansli112@yahoo.com.tw>"]

@@ -5,6 +5,11 @@ The tool will create a database locally.
 
 ![](./img/demo.png)
 
+## Docker
+```
+sh run.sh
+```
+
 ## Environment
 ```
 poetry install
@@ -19,4 +24,3 @@ python insurancer.py <list-of-participant-names>
 ```
 streamlit run app.py
 ```
-> Creating entries is not supported so far for web app.
