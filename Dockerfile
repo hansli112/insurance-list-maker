@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 # set working directory
-WORKDIR insurance-list-maker
+WORKDIR /insurance-list-maker
 
 # install poetry
 RUN apt update && apt install -y git
