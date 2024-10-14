@@ -16,6 +16,7 @@ RUN poetry install
 
 # copy project
 COPY app .
+COPY database.csv.example database.csv
 
 # expose port
 EXPOSE 8501

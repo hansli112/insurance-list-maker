@@ -1,0 +1,43 @@
+FROM geopraevent/python-poetry:1.8.2-python3.11-slim-bookworm
+
+# set environment variables
+ENV PYTHON_KEYRING_BACKEND=keyring.backends.null.Keyring
+ENV POETRY_VIRTUALENVS_IN_PROJECT=true
+
+# install dependencies
+RUN apt update && apt install -y git build-essential cmake python3-dev libffi-dev libjpeg-dev libssl-dev pkg-config ninja-build wget lsb-release ca-certificates
+
+# build pyarrow
+RUN git clone https://github.com/apache/arrow.git && cd arrow && git checkout apache-arrow-17.0.0
+ENV ARROW_HOME=/arrow/dist
+ENV LD_LIBRARY_PATH=/arrow/dist/lib:$LD_LIBRARY_PATH
+ENV CMAKE_PREFIX_PATH=/arrow/dist:$CMAKE_PREFIX_PATH
+RUN cmake -S arrow/cpp/ -B arrow/cpp/build -DCMAKE_INSTALL_PREFIX=$ARROW_HOME --preset ninja-release-python-minimal
+RUN cmake --build arrow/cpp/build --target install
+RUN pip install -r arrow/python/requirements-build.txt
+RUN cd arrow/python && python setup.py build_ext --inplace
+RUN cd arrow/python && python setup.py build_ext --bundle-arrow-cpp bdist_wheel
+RUN pip install arrow/python/dist/pyarrow-17.0.0-cp311-cp311-linux_armv7l.whl
+
+# install streamlit
+RUN pip install -v streamlit
+
+# set working directory
+WORKDIR /insurance-list-maker
+
+# install project
+COPY pyproject.toml .
+COPY README.md .
+
+# copy project
+COPY app .
+COPY database.csv.example database.csv
+
+# expose port
+EXPOSE 8501
+
+# healthcheck
+HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+
+# set entrypoint
+ENTRYPOINT ["poetry", "run", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
